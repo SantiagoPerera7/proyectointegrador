@@ -31,24 +31,24 @@ public class Propiedad {
     private String direccion;
     @Column(name = "descripcion_propiedad")
     private String descripcion;
-    @Column(name = "cantidadbanios_propiedad")
-    private Integer cantidadBanios;
-    @Column(name = "cantidadambientes_propiedad")
-    private Integer cantidadAmbientes;
-    @Column(name = "cantidadcocheras_propiedad")
-    private Integer cantidadCocheras;
-    @Column(name = "barrio_propiedad")
-    private String barrioPropiedad;
-    @Column(name = "ciudad_propiedad")
-    private String ciudadPropiedad;
-    @Column(name = "cantidadplantas_propiedad")
-    private Integer cantidadPlantasPropiedad;
-    @Column(name = "aceptamascotas_propiedad")
-    private boolean aceptaMascotas;
-    @Column(name = "tipo_propiedad")
-    private String tipo;
-    @Column(name = "importealquiler_propiedad")
-    private Integer importeAlquiler;
+//    @Column(name = "cantidadbanios_propiedad")
+//    private Integer cantidadBanios;
+//    @Column(name = "cantidadambientes_propiedad")
+//    private Integer cantidadAmbientes;
+//    @Column(name = "cantidadcocheras_propiedad")
+//    private Integer cantidadCocheras;
+//    @Column(name = "barrio_propiedad")
+//    private String barrioPropiedad;
+//    @Column(name = "ciudad_propiedad")
+//    private String ciudadPropiedad;
+//    @Column(name = "cantidadplantas_propiedad")
+//    private Integer cantidadPlantasPropiedad;
+//    @Column(name = "aceptamascotas_propiedad")
+//    private boolean aceptaMascotas;
+//    @Column(name = "tipo_propiedad")
+//    private String tipo;
+//    @Column(name = "importealquiler_propiedad")
+//    private Integer importeAlquiler;
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     @JsonBackReference
