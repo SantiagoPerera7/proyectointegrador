@@ -7,6 +7,7 @@ package com.proyectointegradordemo.demo.service;
 import com.proyectointegradordemo.demo.domain.Cliente;
 import com.proyectointegradordemo.demo.domain.Propiedad;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -16,7 +17,8 @@ public interface PropiedadService {
     public List<Propiedad> getPropiedades();
     public Propiedad getPropiedad(int id);
     public Propiedad agregarPropiedad(Propiedad propiedad);
-    public void modificarPropiedad(Cliente cliente);
+    public void modificarPropiedad(Propiedad propiedad);
     public void eliminarPropiedad(int id);
     public void modificarPropiedadParcial(Cliente cliente);
+    public void agregarFotoAPropiedad(Integer id, MultipartFile foto) throws Exception;
 }

@@ -34,6 +34,7 @@ public class ClienteServiceImpl implements ClienteService{
     @Override
     @Transactional
     public Cliente agregarCliente(Cliente cliente){
+        cliente.validar();
         if (cliente.getPropiedades() != null) {
         for (Propiedad propiedad : cliente.getPropiedades()) {
             propiedad.setPropietario(cliente); // Asignamos el cliente como propietario de la propiedad
