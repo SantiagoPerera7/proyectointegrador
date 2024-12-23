@@ -22,12 +22,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 /**
  *
  * @author santi
  */
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/propiedades")
 public class PropiedadController {
 
@@ -52,12 +54,16 @@ public class PropiedadController {
 
     @PostMapping
     public ResponseEntity<?> postPropiedad(@RequestBody Propiedad propiedad) {
-        Propiedad propiedadGuardada = propiedadService.agregarPropiedad(propiedad);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(propiedadGuardada.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(propiedadGuardada);
+        try {
+            Propiedad propiedadGuardada = propiedadService.agregarPropiedad(propiedad);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest().path("/{id}")
+                    .buildAndExpand(propiedadGuardada.getId())
+                    .toUri();
+            return ResponseEntity.created(location).body(propiedadGuardada);
+        } catch (PropiedadException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

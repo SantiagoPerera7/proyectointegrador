@@ -5,7 +5,6 @@
 package com.proyectointegradordemo.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.proyectointegradordemo.demo.exceptions.ClienteException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,56 +23,32 @@ import java.util.List;
  * @author santi
  */
 @Entity
-@Table(name = "cliente")
-public class Cliente implements Serializable {
+@Table(name = "inquilino")
+public class Inquilino implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_cliente")
+    @Column(name = "id_inquilino")
     private Integer id;
-    @Column(name = "nombre_cliente")
+    @Column(name = "nombre_inquilino")
     private String nombre;
-    @Column(name = "apellido_cliente")
+    @Column(name = "apellido_inquilino")
     private String apellido;
-    @Column(name = "direccion_cliente")
+    @Column(name = "direccion_inquilino")
     private String direccion;
-    @OneToMany(mappedBy = "propietario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("cliente-propiedad")
-    private List<Propiedad> propiedades = new ArrayList<>();
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("cliente-contrato")
-    private List<Contrato> contratos = new ArrayList<>();
-    @OneToMany(mappedBy = "propietario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("cliente-alquileres")
-    private List<Alquiler> alquileres = new ArrayList<>();
+    //@OneToMany(mappedBy = "inquilino", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JsonBackReference("inquilino-alquileres")
+    //private List<Alquiler> alquileres = new ArrayList<>();
 
 
-    public Cliente() {
+    public Inquilino() {
     }
 
-    public Cliente(String nombre, String apellido, String direccion) {
+    public Inquilino(String nombre, String apellido, String direccion) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.direccion = direccion;
-    }
-
-    public List<Contrato> getContratos() {
-        return contratos;
-    }
-
-    public void setContratos(List<Contrato> contratos) {
-        this.contratos = contratos;
-    }
-
-    public void agregarContrato(Contrato contrato) {
-        contratos.add(contrato);
-        contrato.setCliente(this);
-    }
-
-    public void eliminarContrato(Contrato contrato) {
-       contratos.remove(contrato);
-        contrato.setCliente(null);
     }
 
     public Integer getId() {
@@ -119,25 +94,13 @@ public class Cliente implements Serializable {
             throw new ClienteException("La dirección del cliente no puede ser vacía");
         }
     }
+    //public List<Alquiler> getAlquileres() {
+    //    return alquileres;
+    //}
 
-    public List<Propiedad> getPropiedades() {
-        return propiedades;
-    }
-
-    public void setPropiedades(List<Propiedad> propiedades) {
-        this.propiedades = propiedades;
-    }
-
-    public void agregarPropiedad(Propiedad p) {
-        propiedades.add(p);
-    }
-    public List<Alquiler> getAlquileres() {
-        return alquileres;
-    }
-
-    public void setAlquileres(List<Alquiler> alquileres) {
-        this.alquileres = alquileres;
-    }
+    //public void setAlquileres(List<Alquiler> alquileres) {
+    //    this.alquileres = alquileres;
+    //}
 
     @Override
     public String toString() {

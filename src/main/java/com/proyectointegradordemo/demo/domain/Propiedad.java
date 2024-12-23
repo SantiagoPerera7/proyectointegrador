@@ -5,6 +5,7 @@
 package com.proyectointegradordemo.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.proyectointegradordemo.demo.exceptions.PropiedadException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -15,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,16 +43,21 @@ public class Propiedad {
     private Integer cantidadAmbientes;
     @Column(name = "cantidadcocheras_propiedad")
     private Integer cantidadCocheras;
-    @Column(name = "barrio_propiedad")
-    private String barrio;
-    @Column(name = "ciudad_propiedad")
-    private String ciudad;
+    @ManyToOne
+    @JoinColumn(name = "id_barrio")
+    private Barrio barrio;
+    @ManyToOne
+    @JoinColumn(name = "id_ciudad")
+    private Ciudad ciudad;
     @Column(name = "cantidadplantas_propiedad")
     private Integer cantidadPlantas;
+    @Column(name = "cantidaddormitorios_propiedad")
+    private Integer cantidadDormitorios;
     @Column(name = "aceptamascotas_propiedad")
     private boolean aceptaMascotas;
-    @Column(name = "tipo_propiedad")
-    private String tipo;
+    @ManyToOne
+    @JoinColumn(name = "id_tipopropiedad")
+    private TipoPropiedad tipo;
     @Column(name = "metroscuadradostotales_propiedad")
     private Double metrosCuadradosTotales;
     @Column(name = "metroscuadradosedificados_propiedad")
@@ -61,20 +68,25 @@ public class Propiedad {
     private String titularActualUTE;
     @Column(name = "titularactualose_propiedad")
     private String titularActualOSE;
-    @Column(name = "tipotecho_propiedad")
-    private String tipoTecho;
+    @ManyToOne
+    @JoinColumn(name = "id_tipotecho") // Define la clave foránea en la tabla "propiedad"
+    private TipoTecho tipoTecho;
     @ManyToOne
     @JoinColumn(name = "id_cliente")
-    @JsonBackReference
+    @JsonBackReference("cliente-propiedad")
     public Cliente propietario;
     @OneToMany(mappedBy = "propiedad", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("propiedad-fotos")
     private List<Foto> fotos = new ArrayList<>();
+    @OneToOne(mappedBy = "propiedad")
+    @JsonBackReference("propiedad-alquiler")
+    private Alquiler alquiler;
     public Propiedad(){
     }
-    public Propiedad(String direccion, String descripcion, Cliente propietario, String tipo, String barrio,
-            String ciudad, Integer cantidadAmbientes, Integer cantidadPlantas, Integer cantidadBanios,
+    public Propiedad(String direccion, String descripcion, Cliente propietario, TipoPropiedad tipo, Barrio barrio,
+            Ciudad ciudad, Integer cantidadAmbientes, Integer cantidadPlantas, Integer cantidadBanios, Integer cantidadDormitorios,
             Double metrosCuadradosTotales, Double metrosCuadradosEdificados, Double metrosCuadradosTerreno,
-            String titularActualUTE,String titularActualOSE, String tipoTecho, Integer cantidadCocheras, Boolean aceptaMascotas){
+            String titularActualUTE,String titularActualOSE, TipoTecho tipoTecho, Integer cantidadCocheras, Boolean aceptaMascotas){
         this.direccion=direccion;
         this.descripcion=descripcion;
         this.propietario=propietario;
@@ -84,6 +96,7 @@ public class Propiedad {
         this.cantidadAmbientes=cantidadAmbientes;
         this.cantidadPlantas=cantidadPlantas;
         this.cantidadBanios=cantidadBanios;
+        this.cantidadDormitorios=cantidadDormitorios;
         this.metrosCuadradosTotales=metrosCuadradosTotales;
         this.metrosCuadradosEdificados=metrosCuadradosEdificados;
         this.metrosCuadradosTerreno=metrosCuadradosTerreno;
@@ -92,6 +105,13 @@ public class Propiedad {
         this.tipoTecho=tipoTecho;
         this.cantidadCocheras=cantidadCocheras;
         this.aceptaMascotas=aceptaMascotas;
+    }
+    public Alquiler getAlquiler() {
+        return alquiler;
+    }
+
+    public void setAlquiler(Alquiler alquiler) {
+        this.alquiler = alquiler;
     }
         public List<Foto> getFotos() {
         return fotos;
@@ -165,19 +185,19 @@ public class Propiedad {
         this.cantidadCocheras = cantidadCocheras;
     }
 
-    public String getBarrio() {
+    public Barrio getBarrio() {
         return barrio;
     }
 
-    public void setBarrio(String barrio) {
+    public void setBarrio(Barrio barrio) {
         this.barrio = barrio;
     }
 
-    public String getCiudad() {
+    public Ciudad getCiudad() {
         return ciudad;
     }
 
-    public void setCiudad(String ciudad) {
+    public void setCiudad(Ciudad ciudad) {
         this.ciudad = ciudad;
     }
 
@@ -197,11 +217,11 @@ public class Propiedad {
         this.aceptaMascotas = aceptaMascotas;
     }
 
-    public String getTipo() {
+    public TipoPropiedad getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(TipoPropiedad tipo) {
         this.tipo = tipo;
     }
 
@@ -245,31 +265,49 @@ public class Propiedad {
         this.titularActualOSE = titularActualOSE;
     }
 
-    public String getTipoTecho() {
+    public TipoTecho getTipoTecho() {
         return tipoTecho;
     }
 
-    public void setTipoTecho(String tipoTecho) {
+    public void setTipoTecho(TipoTecho tipoTecho) {
         this.tipoTecho = tipoTecho;
     }
     public void validar() throws PropiedadException{
+        if(descripcion.isEmpty()||descripcion==null){
+            throw new PropiedadException("La descripción de la propiedad no puede ser nula");
+        }
         if(direccion.isEmpty()||direccion==null){
             throw new PropiedadException("La dirección de la propiedad no puede ser nula");
         }
-        if(descripcion.isEmpty()||descripcion==null){
-            throw new PropiedadException("La descripción de la propiedad no puede ser nula");
+        if(tipo==null){
+            throw new PropiedadException("Debe seleccionar un tipo de propiedad");
+        }
+        if(barrio==null){
+            throw new PropiedadException("El barrio de la propiedad no puede ser nulo");
+        }
+        if(ciudad==null){
+            throw new PropiedadException("La ciudad de la propiedad no puede ser nula");
         }
         if(propietario==null){
             throw new PropiedadException("La propiedad debe tener asignado un propietario");
         }
-        if(tipo.isEmpty()||tipo==null){
-            throw new PropiedadException("Debe seleccionar un tipo de propiedad");
+        if(cantidadAmbientes<0){
+            throw new PropiedadException("Ingrese un valor válido de cantidad de ambientes");
         }
-        if(barrio.isEmpty()||barrio==null){
-            throw new PropiedadException("El barrio de la propiedad no puede ser nulo");
+        if(cantidadPlantas<0){
+            throw new PropiedadException("Ingrese un valor válido de cantidad de plantas");
         }
-        if(ciudad.isEmpty()||ciudad==null){
-            throw new PropiedadException("La ciudad de la propiedad no puede ser nula");
+        if(cantidadBanios<0){
+            throw new PropiedadException("Ingrese un valor válido de cantidad de banños");
+        }
+        if(metrosCuadradosTotales<0){
+            throw new PropiedadException("Ingrese un valor válido de cantidad de metros cuadrados totales");
+        }
+        if(metrosCuadradosEdificados<0){
+            throw new PropiedadException("Ingrese un valor válido de cantidad de metros cuadrados edificados");
+        }
+        if(metrosCuadradosTerreno<0){
+            throw new PropiedadException("Ingrese un valor válido de cantidad de metros cuadrados de terreno");
         }
         if(titularActualUTE.isEmpty()||titularActualUTE==null){
             throw new PropiedadException("El titular actual de UTE no puede ser nulo");
@@ -277,9 +315,15 @@ public class Propiedad {
         if(titularActualOSE.isEmpty()||titularActualUTE==null){
             throw new PropiedadException("El titular actual de OSE no puede ser nulo");
         }
-        if(tipoTecho.isEmpty()||tipoTecho==null){
+        if(tipoTecho==null){
             throw new PropiedadException("El tipo de techo no puede ser nulo");
         }
+        if(cantidadCocheras<0){
+            throw new PropiedadException("Ingrese un valor válido de cantidad de cocheras");
+        }
+//        if(fotos.isEmpty()){
+//            throw new PropiedadException("Debe ingresar fotos para la propiedad");
+//        }
     }
     @Override
     public String toString(){

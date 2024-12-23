@@ -4,6 +4,7 @@
  */
 package com.proyectointegradordemo.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +31,7 @@ public class Foto {
 
     @ManyToOne
     @JoinColumn(name = "id_propiedad", nullable = false)
+    @JsonBackReference("propiedad-fotos")
     private Propiedad propiedad;
 
     public Foto() {

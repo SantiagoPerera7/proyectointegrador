@@ -12,8 +12,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -37,16 +39,41 @@ public class Contrato implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("cliente-contrato")
     private Cliente cliente;
+    @Column(name = "fechainicio_contrato")
+    private Date fechaInicio;
+    @Column(name = "fechafin_contrato")
+    private Date fechaFin;
+    @OneToOne(mappedBy = "contrato")
+    @JsonBackReference("contrato-alquiler")
+    private Alquiler alquiler;
 
     public Contrato() {
     }
 
-    public Contrato(String nombreArchivo, String rutaArchivo, Cliente cliente) {
+    public Contrato(String nombreArchivo, String rutaArchivo, Cliente cliente, Date fechaInicio, Date fechaFin) {
         this.nombreArchivo = nombreArchivo;
         this.rutaArchivo = rutaArchivo;
         this.cliente = cliente;
+        this.fechaInicio=fechaInicio;
+        this.fechaFin=fechaFin;  
+    }
+
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
     }
 
     public Integer getId() {
